@@ -1,11 +1,17 @@
-package Backup;
+package backup;
 
+import java.awt.Color;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,6 +33,7 @@ public class home extends javax.swing.JFrame {
      */
     public home() {
         initComponents();
+        trans.setBackground(new Color(255,255,255,0));
     }
 
     /**
@@ -38,65 +45,57 @@ public class home extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        trans = new javax.swing.JPanel();
+        j2 = new javax.swing.JPasswordField();
+        jLabel7 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        j1 = new javax.swing.JTextField();
-        j2 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         clik = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        j1 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("P2P");
+        setTitle("Login | Knect");
         setBackground(new java.awt.Color(51, 0, 255));
         setForeground(new java.awt.Color(51, 51, 255));
-        setPreferredSize(new java.awt.Dimension(940, 460));
+        setPreferredSize(new java.awt.Dimension(852, 490));
         setResizable(false);
+        setSize(new java.awt.Dimension(852, 490));
         getContentPane().setLayout(null);
 
-        jLabel1.setBackground(new java.awt.Color(102, 102, 102));
-        jLabel1.setFont(new java.awt.Font("Gungsuh", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Welcome to Knect Data Storage System");
-        jLabel1.setAutoscrolls(true);
-        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 51, 255), 2, true));
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(57, 11, 822, 74);
+        trans.setLayout(null);
 
-        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel3.setText("Email ID :");
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(290, 140, 80, 50);
-
-        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel2.setText("Password :");
-        getContentPane().add(jLabel2);
-        jLabel2.setBounds(290, 180, 90, 80);
-
-        j1.setFont(new java.awt.Font("Times New Roman", 1, 22)); // NOI18N
-        j1.setForeground(new java.awt.Color(51, 51, 255));
-        j1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                j1ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(j1);
-        j1.setBounds(390, 150, 220, 40);
-
-        j2.setFont(new java.awt.Font("Times New Roman", 1, 22)); // NOI18N
-        j2.setForeground(new java.awt.Color(0, 102, 255));
+        j2.setFont(new java.awt.Font("Tahoma", 1, 22)); // NOI18N
+        j2.setForeground(new java.awt.Color(51, 51, 255));
         j2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 j2ActionPerformed(evt);
             }
         });
-        getContentPane().add(j2);
-        j2.setBounds(390, 200, 220, 40);
+        trans.add(j2);
+        j2.setBounds(110, 170, 220, 40);
+
+        jLabel7.setIcon(new javax.swing.ImageIcon("C:\\xampp\\htdocs\\PHP\\p2\\images\\logo-dark.png")); // NOI18N
+        jLabel7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel7MouseClicked(evt);
+            }
+        });
+        trans.add(jLabel7);
+        jLabel7.setBounds(160, 20, 80, 70);
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel2.setText("Password :");
+        trans.add(jLabel2);
+        jLabel2.setBounds(10, 150, 90, 80);
+
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel3.setText("Email ID :");
+        trans.add(jLabel3);
+        jLabel3.setBounds(10, 110, 80, 50);
 
         jButton1.setFont(new java.awt.Font("FrankRuehl", 1, 24)); // NOI18N
         jButton1.setForeground(new java.awt.Color(51, 51, 255));
@@ -106,14 +105,13 @@ public class home extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1);
-        jButton1.setBounds(420, 260, 150, 40);
+        trans.add(jButton1);
+        jButton1.setBounds(140, 230, 150, 40);
 
         jLabel4.setFont(new java.awt.Font("Times New Roman", 0, 20)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(102, 102, 102));
         jLabel4.setText("New User ? ");
-        getContentPane().add(jLabel4);
-        jLabel4.setBounds(410, 300, 140, 40);
+        trans.add(jLabel4);
+        jLabel4.setBounds(130, 270, 140, 40);
 
         clik.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         clik.setForeground(new java.awt.Color(255, 204, 0));
@@ -124,32 +122,23 @@ public class home extends javax.swing.JFrame {
                 clikMouseClicked(evt);
             }
         });
-        getContentPane().add(clik);
-        clik.setBounds(510, 310, 70, 20);
+        trans.add(clik);
+        clik.setBounds(230, 280, 70, 20);
 
-        jLabel7.setIcon(new javax.swing.ImageIcon("C:\\xampp\\htdocs\\PHP\\p2\\images\\logo-dark.png")); // NOI18N
-        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel7MouseClicked(evt);
-            }
-        });
-        getContentPane().add(jLabel7);
-        jLabel7.setBounds(440, 50, 150, 120);
+        j1.setFont(new java.awt.Font("Times New Roman", 1, 22)); // NOI18N
+        j1.setForeground(new java.awt.Color(51, 51, 255));
+        trans.add(j1);
+        j1.setBounds(110, 120, 220, 40);
 
-        jLabel6.setIcon(new javax.swing.ImageIcon("C:\\Users\\Nitish Kumar\\Desktop\\cloud.jpg")); // NOI18N
+        getContentPane().add(trans);
+        trans.setBounds(400, 70, 360, 350);
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pics/1.jpg"))); // NOI18N
         getContentPane().add(jLabel6);
-        jLabel6.setBounds(0, 0, 940, 460);
+        jLabel6.setBounds(0, 0, 850, 490);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void j1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_j1ActionPerformed
-
-    private void j2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_j2ActionPerformed
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
         setVisible(false);
@@ -162,11 +151,30 @@ public class home extends javax.swing.JFrame {
     }//GEN-LAST:event_clikMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+                if(j1.getText()!="" && j2.getText().contentEquals(""))
+                {
+                        
+                    JOptionPane.showMessageDialog(rootPane, "Error: Please enter All Text Field ");
+                            return ;
+                }
+        
+        
+        if (!(Pattern.matches("^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+[a-zA-Z0-9]+$", j1.getText()))) 
+                    { 
+                           
+                           
+                            JOptionPane.showMessageDialog(rootPane, "Error: Please enter valid email address ");
+                            return ;
+                    }
+        
+        
+        
         
         try {
             Connection Con= ConnectDB.connect();
-            String q,w,e,r,t,y,u,b,log,ph;
-            int n;
+            String q,w,e,r,t,y,u,b,log,ph,g;
+            Long n;
+            
              q=j1.getText();
              w=j2.getText();
              Statement st=Con.createStatement();
@@ -177,22 +185,59 @@ public class home extends javax.swing.JFrame {
             r=ty.getString("email");
          t=ty.getString("password");
          y=ty.getString("status");
-         n=ty.getInt("Mobile");
-         if((q.equals(r) )&& (w.equals(t)))
+         n=ty.getLong("Mobile");
+         g=ty.getString("UserID");
+         String access=w+g;
+         MD5 md=new MD5();
+         String w1;
+         w1=md.getMd5(access);
+        
+         
+         if((q.equals(r) )&& (w1.equals(t)))
             {
+              
+                
                 setVisible(false);
+           
+               
+                
+                 PreparedStatement ps=Con.prepareStatement("insert into log(userid,action,time) value(?,?,?)");
+                 ps.setString(1, g);
+                 ps.setString(2,"Login");
+                 LocalDateTime myDateObj = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                ps.setString(3, myDateObj.format(myFormatObj));
+                ps.execute();
                 
                 
-                new SecureBag().setVisible(true);
-                
+                g=g+","+w;
+                if(y.equals("block"))
+                {
+                     JOptionPane.showMessageDialog(rootPane, "Sorry Your Are blocked By admin. ");
+                       new home().setVisible(true);
+                       return;
+                        
+                }else{
+                    if(y.equals("Admin"))
+                    {
+                        new backup.Admin().setVisible(true);
+                    }else{
+                    
+                new backup.client(g).setVisible(true);
+                System.out.println("hek8");
+                    }
+              return ;
+                }
             
             }
-         
-         
-         
-            
+        
             
         }
+              
+             JOptionPane.showMessageDialog(rootPane, "Error: Email or Password Incorrect ");
+            
+             
+        
             
             
             
@@ -210,6 +255,10 @@ public class home extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void j2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_j2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -249,13 +298,13 @@ public class home extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel clik;
     private javax.swing.JTextField j1;
-    private javax.swing.JTextField j2;
+    private javax.swing.JPasswordField j2;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel trans;
     // End of variables declaration//GEN-END:variables
 }

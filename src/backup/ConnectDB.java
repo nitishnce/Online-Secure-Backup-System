@@ -1,6 +1,6 @@
 
 
-package Backup;
+package backup;
 import static java.lang.Character.UnicodeBlock.forName;
 import java.sql.Connection;
 import java.sql.DriverManager;

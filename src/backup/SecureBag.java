@@ -1,4 +1,4 @@
-package Backup;
+package backup;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -64,7 +64,7 @@ public class SecureBag extends javax.swing.JFrame {
 
         jLabel2.setText("User Name");
 
-        user.setText("Thimus");
+        user.setText("Nitish Kumar");
         user.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userActionPerformed(evt);
@@ -80,7 +80,7 @@ public class SecureBag extends javax.swing.JFrame {
             }
         });
 
-        pass.setText("123456");
+        pass.setText("sleepingsn");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -174,7 +174,7 @@ public class SecureBag extends javax.swing.JFrame {
             fileChooser.getConnection(sftp);
             this.setVisible(false);*/
                 
-                String remotePath = "/C:/Users/Thimus/Desktop/Hell/"; 
+                String remotePath = "/D:/"; 
                 nroot = new DefaultMutableTreeNode(remotePath);
                 
                 try {
@@ -182,10 +182,10 @@ public class SecureBag extends javax.swing.JFrame {
                  } catch (SftpException e1) {
                 // TODO Auto-generated catch block
                 }   catch (JSchException ex) { 
-             //     Logger.getLogger(SimpleLinuxGUI.class.getName()).log(Level.SEVERE, null, ex);
+                  Logger.getLogger(SecureBag.class.getName()).log(Level.SEVERE, null, ex);
                 } 
                 this.setVisible(false);
-                RemoteDirJFrame rem = new RemoteDirJFrame(nroot);
+                RemoteDirJFrame rem = new RemoteDirJFrame(nroot,"");
                 rem.getConnection(sftp);
                 rem.setVisible(true);
             

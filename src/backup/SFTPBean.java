@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Backup;
+package backup;
 
 /**
  *
@@ -48,6 +48,7 @@ public class SFTPBean {
 
 			//creating session with user, host port
 			this.mSSHSession = mJschSession.getSession(strUserName, strHostAddress, iPort);
+                        
 			
 			//set password
 			this.mSSHSession.setPassword(strPassword);
@@ -79,11 +80,22 @@ public class SFTPBean {
 		}
 		return vtFile;
 	}
-        
+        public Long sizeConsumed(String path)
+        {
+            Vector<LsEntry> list = listFile(path);
+            long size = 0;
+            for (LsEntry oListItem : list)
+            {
+                size+=oListItem.getAttrs().getSize();
+            }
+            Long sz = (Long) size/1024;
+            return sz;
+        }
         public  void cargarRTree(String remotePath, DefaultMutableTreeNode parent) throws SftpException, JSchException { 
                 Vector<ChannelSftp.LsEntry> list = this.mChannelSftp.ls(remotePath);
                   //System.out.println(list);
-                //Vector<ChannelSftp.LsEntry> list = sftpChannel    
+                //Vector<ChannelSftp.LsEntry> list = sftpChannel  
+                
                 for (ChannelSftp.LsEntry oListItem : list) 
                 { // Iterate objects in the list to get file/folder names.       
                     DefaultMutableTreeNode node = new DefaultMutableTreeNode(oListItem.getFilename());
@@ -103,6 +115,14 @@ public class SFTPBean {
             this.mChannelSftp.rm(path);
             return true;
         }
+        public boolean folder(String path) throws SftpException
+        {
+            this.mChannelSftp.mkdir(path);
+           
+            
+            return true;
+        }
+        
 	//download file
 	public boolean downloadFile(String strSftpFile, String strLocalFile) {
 		boolean blResult = false;

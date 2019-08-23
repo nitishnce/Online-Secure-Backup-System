@@ -3,14 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Backup;
+package backup;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -33,9 +41,19 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
         this.sftp = sftp;
         openFileChooser = new JFileChooser();
     }
-    public RemoteDirJFrame(DefaultMutableTreeNode nroot) {
+    public RemoteDirJFrame(DefaultMutableTreeNode nroot,String tit) {
+        
+       
         this.nroot = nroot;
         initComponents();
+        title.setText(tit);
+         if(tit.equals("DOWNLOAD YOUR FILE"))
+        {
+            del.setVisible(false);
+        }
+        else{
+            down.setVisible(false);
+        }
 
     }
 
@@ -55,12 +73,13 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
         menuBar2 = new java.awt.MenuBar();
         menu3 = new java.awt.Menu();
         menu4 = new java.awt.Menu();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        down = new javax.swing.JButton();
+        del = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         yourJtree = new javax.swing.JTree(nroot);
-        jButton3 = new javax.swing.JButton();
         display = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -85,25 +104,27 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
         menu4.setLabel("Edit");
         menuBar2.add(menu4);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jButton1.setText("Download");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        down.setText("Download");
+        down.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                downActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Delete");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        del.setText("Delete");
+        del.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                delActionPerformed(evt);
             }
         });
 
         jScrollPane1.setViewportView(yourJtree);
 
-        jButton3.setText("Upload");
+        title.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        title.setForeground(new java.awt.Color(0, 0, 204));
+        title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        jButton3.setText("Cancel");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -115,38 +136,47 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(display, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(down, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                    .addComponent(del, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(21, 21, 21))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(94, 94, 94)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(display, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(25, 25, 25)
+                        .addComponent(down)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(del)
+                        .addGap(18, 18, 18)
                         .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
                         .addContainerGap())
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    Connection Con;
+    
+    private void downActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downActionPerformed
        
         
         //code to get the filePath from JTree
@@ -159,14 +189,19 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
                     //for(TreePath path:paths){
                      int pathCount = path.getPathCount();
                     filePath = filePath+path.getPathComponent(0).toString();
+                    System.out.println(pathCount+" pathcount ");
+                    System.out.println(filePath+" filepath ");
                     for(int i=1;i<pathCount-1;i++)
                     {
                         filePath = filePath+path.getPathComponent(i).toString()+"/";
                     }
-            
-                    filePath = filePath+path.getLastPathComponent().toString();
+           System.out.println(filePath+" --- ");
+                    filePath = filePath+"/"+path.getLastPathComponent().toString();
+                    System.out.println(filePath+" 00000 ");
                     display.setText(filePath);
-               
+                    System.out.println(filePath+" 77777 ");
+                   String enFileName = path.getLastPathComponent().toString();
+                   System.out.println(filePath+" 1111 ");
            //choose  target directory(at local computer)
            String targetFolder = "";
            JFileChooser chooser;
@@ -181,91 +216,196 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
             //    
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
                     targetFolder = chooser.getSelectedFile().getAbsolutePath();
+                    System.out.println(filePath+" tttt "+ targetFolder+" gggggg ");
                     if(sftp.downloadFile(filePath, targetFolder))
-                        display.setText("Download Success");
-                    else 
-                        display.setText("Download Unsuceesful");
+                    {
+                        try {
+                              JOptionPane.showMessageDialog(rootPane, "Download Successful ");
+                            String name = path.getLastPathComponent().toString();
+                            String enPath = targetFolder+"/"+name;
+                            File enFile  = new File(enPath);  
+                            String depath = targetFolder+"/"+name.substring(0,name.length()-10);
+                            File deFile = new File(depath);
+                            String key = getPassword();    
+                            CryptoUtils.decrypt(key, enFile, deFile);
+                            
+                               Con= ConnectDB.connect();
+                            PreparedStatement ps=Con.prepareStatement("insert into log(userid,action,time) value(?,?,?)");
+                             ps.setString(1, username);
+                             ps.setString(2,"Download File, File name : "+ name.substring(0,name.length()-10));
+                             LocalDateTime myDateObj = LocalDateTime.now();
+                             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                             ps.setString(3, myDateObj.format(myFormatObj));
+                                 ps.execute();
+                        
+                            
+                            
+                            
+                            
+                            
+                   
+                            enFile.delete();
+                            this.setVisible(false);
+                        } catch (Exception ex) {
+                            Logger.getLogger(RemoteDirJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }   
+                    else {
+                       JOptionPane.showMessageDialog(rootPane, "Download UnSuccessful ");
+                        try {
+                            Con= ConnectDB.connect();
+                             PreparedStatement ps=Con.prepareStatement("insert into log(userid,action,time) value(?,?,?)");
+                             ps.setString(1, username);
+                             ps.setString(2,"Download Failed. ");
+                             LocalDateTime myDateObj = LocalDateTime.now();
+                             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                             ps.setString(3, myDateObj.format(myFormatObj));
+                                 ps.execute();
+                       
+                            
+                        } catch (Exception ex) {
+                            Logger.getLogger(RemoteDirJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                           
+                    }
+                    this.setVisible(false);
             }
             else {
                 display.setText("No Target folder is selected ");
-            }//}
+            }
         }
         else
                      display.setText("No file is selected to download");
                      
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_downActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void delActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delActionPerformed
         // TODO add your handling code here:
         if(!yourJtree.isSelectionEmpty())
                  {
                      TreePath path =   yourJtree.getSelectionPath();
                      
-                     String filePath = "";
+                     String filePath = "",file="";
                     //for(TreePath path:paths){
                      int pathCount = path.getPathCount();
                     filePath = filePath+path.getPathComponent(0).toString();
-                    
+                    file=filePath;
+                    System.out.println("--1: "+filePath);
                     
                     for(int i=1;i<pathCount-1;i++)
                     {
                         filePath = filePath+path.getPathComponent(i).toString()+"/";
                     }
-            
-                    filePath = filePath+path.getLastPathComponent().toString();
+                        
+                    filePath = filePath+"/"+path.getLastPathComponent().toString();
                     display.setText(filePath);
+                    
             try {
-                if(sftp.deleteFile(filePath));
-            } catch (SftpException ex) {
+                if(sftp.deleteFile(filePath))
+                {
+                   Con= ConnectDB.connect();
+                 System.out.println("f8888f "+path.getLastPathComponent().toString() );
+                 PreparedStatement ps=Con.prepareStatement("insert into log(userid,action,time) value(?,?,?)");
+                             ps.setString(1, username);
+                              System.out.println("ff "+path.getLastPathComponent().toString() );
+                             ps.setString(2,"Delete File : "+path.getLastPathComponent().toString());
+                             System.out.println("f00000f "+path.getLastPathComponent().toString() );
+                             LocalDateTime myDateObj = LocalDateTime.now();
+                             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                             System.out.println("777777");
+                             ps.setString(3, myDateObj.format(myFormatObj));
+                                 ps.execute();
+                                 System.out.println("tttttt");
+                                     Long sized=sftp.sizeConsumed(file);
+                                     System.out.println("1111111");
+                                      ps=Con.prepareStatement("UPDATE `regis_app` SET `size_used`='"+sized+"' where`UserID`='"+username+"'");
+                                      System.out.println("444444");
+                                         ps.execute();
+                                         System.out.println("133455");
+                                         //server sync
+                                         String s5;
+                                        Statement st=Con.createStatement();
+                                         ResultSet ty=st.executeQuery("SELECT * from servers");
+                                         System.out.println("888888");
+                                         ty.next();
+                                         System.out.println("555555");
+                                         while(ty.next())
+                                         {
+                                             System.out.println("88989898989");
+                                             sftp.connect(ty.getString("server_ip"),ty.getInt("server_port") , ty.getString("server_user"), ty.getString("server_pass"));
+                                             
+                                             s5=ty.getString("server_path");
+                                             System.out.println("/////// "+ s5+username+"/"+ " ---- "+ path.getLastPathComponent().toString() );
+                                             sftp.deleteFile(s5+username+"/"+path.getLastPathComponent().toString());
+                                             System.out.println("-------");
+                                             
+                                         }
+                                         sftp.close();
+                                         setVisible(false);
+                                         JOptionPane.showMessageDialog(rootPane, path.getLastPathComponent().toString()+" :File is deleted successful");
+                                         
+                                         
+                }
+                       
+            } catch (Exception ex) {
                 Logger.getLogger(RemoteDirJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-                    update("File is deleted");
-                    
+            /*
+            try {
+                
+                
+                
+                update("File is deleted",file);
+            } catch (JSchException ex) {
+                Logger.getLogger(RemoteDirJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+              */      
          
         }
         else
                      display.setText("No file is selected to delete");
                      
         
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_delActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-         int returnValue = openFileChooser.showOpenDialog(this);
-       if(returnValue == JFileChooser.APPROVE_OPTION){
-           display.setText(openFileChooser.getSelectedFile().getAbsolutePath());
-           
-        if(sftp.uploadFile(openFileChooser.getSelectedFile().getAbsolutePath(),"/C:/Users/Thimus/Desktop/Hell/"+openFileChooser.getSelectedFile().getName())) {
-                                update("upload successed");
-                               
-			}
-			else {
-				update("upload failed");
-			}
-
-       }
-       else
-           display.setText("No file chosen");
-               
+        this.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
-    private void setText(String message)
+  String Pass,username;
+    public void initpa(String paas,String user)
+    {
+        Pass=paas;
+        username=user;
+    }
+    
+    
+    
+    
+    
+    
+    
+    public String getPassword()
+   {
+       String pass = Pass;
+       MD5 md = new MD5();
+       return md.getMd5(pass).substring(0, 16);
+   }    private void setText(String message)
     {
         display.setText(message);
     }
-    private void update(String message)
+    private void update(String message,String file) throws JSchException
     {
-        String remotePath = "/C:/Users/Thimus/Desktop/Hell/"; 
+        String remotePath = file; 
         nroot1 = new DefaultMutableTreeNode(remotePath);
                 
                 try {
                     sftp.cargarRTree(remotePath, nroot1);
-                 } catch (SftpException e1) {
+                 }catch (SftpException e1) {
                 // TODO Auto-generated catch block
-                }   catch (JSchException ex) { 
-                 // Logger.getLogger(SimpleLinuxGUI.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-        RemoteDirJFrame frame = new  RemoteDirJFrame(nroot1);
+                }
+        //Logger.getLogger(SimpleLinuxGUI.class.getName()).log(Level.SEVERE, null, ex);
+        RemoteDirJFrame frame = new  RemoteDirJFrame(nroot1,"DELETE YOUR FILE");
         frame.setText(message);
         frame.getConnection(sftp);
         frame.setVisible(true);
@@ -312,9 +452,9 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton del;
     private javax.swing.JLabel display;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton down;
     private javax.swing.JButton jButton3;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -324,6 +464,7 @@ public class RemoteDirJFrame extends javax.swing.JFrame {
     private java.awt.Menu menu4;
     private java.awt.MenuBar menuBar1;
     private java.awt.MenuBar menuBar2;
+    private javax.swing.JLabel title;
     private javax.swing.JTree yourJtree;
     // End of variables declaration//GEN-END:variables
 }

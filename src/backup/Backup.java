@@ -16,7 +16,7 @@ public class Backup {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        //new Front().setVisible(true);
+        new Front().setVisible(true);
     }
     
 }
